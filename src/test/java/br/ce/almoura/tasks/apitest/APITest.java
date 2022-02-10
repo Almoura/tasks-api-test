@@ -29,7 +29,7 @@ public class APITest {
 	@Test
 	public void deveAdicionarTarefasComSucesso() {
 		RestAssured.given()
-			.body("{\"task\": \"Teste via APIRest\", \"dueDate\": \"2022-01-27\"}")
+			.body("{\"task\": \"Teste via APIRest\", \"dueDate\": \"2022-02-10\"}")
 			.contentType(ContentType.JSON)
 			.when()
 				.post("/todo")
@@ -51,6 +51,31 @@ public class APITest {
 				.statusCode(400)
 				.body("message", CoreMatchers.is("Due date must not be in past"))
 			;
+	}	
+	
+	
+	@Test
+	public void deveRemoverTarefaComSucesso() {
+		// Inserção
+		Integer id = RestAssured.given()
+			.body("{\"task\": \"Tarefa Teste API\", \"dueDate\": \"2022-02-10\" }")
+			.contentType(ContentType.JSON)
+		.when()
+			.post("/todo")
+		.then()
+			.log().all() // Mostra os dados que foram inseridos na área de log do Eclipse
+			.statusCode(201)
+			.extract().path("id")  // Capturar o ID do registro que será excluído
+		;	
+		System.out.println(id);
+		
+		// Remoção
+		RestAssured.given()
+			.when()
+				.delete("/todo/"+id)
+			.then()
+				.statusCode(204)
+		;
 	}	
 	
 }
